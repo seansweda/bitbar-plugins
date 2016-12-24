@@ -1,25 +1,27 @@
 #!/bin/bash
+# lightweight cpu/temp/fan monitor
+# only forks twice, everything else shell internals
+# smc executable created from smc.c in iStats gem
 
 IFS_=$IFS
-
-# should only have to fork twice, everything else shell internals
 iostat=( `/usr/sbin/iostat -o -c 2` )
-istats=( `/Users/sweda/.rbenv/versions/2.3.3/bin/istats cpu` )
+smc=( `/Users/sweda/bin/smc` )
 
 if [ ${#iostat[@]} -eq 31 ]; then
     idle=${iostat[27]}
     IFS=. idle_int=( $idle )
     IFS=$IFS_
-    cpu=$(( 100 - $idle_int ))"%"
+    cpu="$(( 100 - $idle_int ))%"
 else
     cpu="n/a"
 fi
 
-if [ ${#istats[@]} -eq 4 ]; then
-    temp=${istats[2]}
+if [ ${#smc[@]} -eq 26 ]; then
+    temp="${smc[1]}${smc[2]}"
+    fan="${smc[6]} ${smc[7]}"
+    echo "$cpu : $temp : $fan"
 else
-    temp="n/a"
+    temp="$cpu : n/a"
 fi
 
-echo "$cpu : $temp\n"
 
