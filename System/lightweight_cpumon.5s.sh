@@ -1,7 +1,25 @@
 #!/bin/bash
 
-cpu=$(/usr/sbin/iostat -o -c 2 | tail -1 | awk '{print $6}' | cut -d. -f 1)
-temp=$(/Users/sweda/.rbenv/versions/2.3.3/bin/istats cpu | awk '{print $3}')
+IFS_=$IFS
 
-printf "%s%% : %s\n" $(( 100 - $cpu )) $temp
+# should only have to fork twice, everything else shell internals
+iostat=( `/usr/sbin/iostat -o -c 2` )
+istats=( `/Users/sweda/.rbenv/versions/2.3.3/bin/istats cpu` )
+
+if [ ${#iostat[@]} -eq 31 ]; then
+    idle=${iostat[27]}
+    IFS=. idle_int=( $idle )
+    IFS=$IFS_
+    cpu=$(( 100 - $idle_int ))"%"
+else
+    cpu="n/a"
+fi
+
+if [ ${#istats[@]} -eq 4 ]; then
+    temp=${istats[2]}
+else
+    temp="n/a"
+fi
+
+echo "$cpu : $temp\n"
 
