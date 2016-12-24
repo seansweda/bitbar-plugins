@@ -4,11 +4,12 @@
 # smc executable created from smc.c in iStats gem
 
 IFS_=$IFS
-iostat=( `/usr/sbin/iostat -o -c 2` )
+iostat=( `/usr/sbin/iostat -n 0 -dC -c 2` )
 smc=( `/Users/sweda/bin/smc` )
 
-if [ ${#iostat[@]} -eq 31 ]; then
-    idle=${iostat[27]}
+if [ ${#iostat[@]} -eq 10 ]; then
+    idle=${iostat[9]}
+    # ensure integer so that bash math won't bomb
     IFS=. idle_int=( $idle )
     IFS=$IFS_
     cpu="$(( 100 - $idle_int ))%"
