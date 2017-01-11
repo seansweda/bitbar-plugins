@@ -5,11 +5,11 @@
 IFS_=$IFS
 IFS=$'\n;' pmset=( `pmset -g rawbatt` )
 
-if [ ${#pmset} -eq 17 ]; then
+if [[ ${#pmset} -eq 17 ]]; then
     eval ${pmset[6]}
     IFS=: hours=( $Time )
     IFS=$'\n;'
-    if [ $hours -gt 24 ]; then
+    if [[ $hours -gt 24 ]]; then
 	echo "∞"
 	echo "---"
 	echo $Time
